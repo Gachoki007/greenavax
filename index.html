@@ -1,1330 +1,881 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GRAVAX · Airdrop Campaign</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<style>
-/* ═══════════════════════════════════════════
-   GRAVAX DESIGN SYSTEM — PRODUCTION READY
-   ═══════════════════════════════════════════ */
-:root{
-  --lime:    #00FF9F;
-  --lime2:   #39FF14;
-  --forest:  #00B074;
-  --gold:    #D4FF4D;
-  --black:   #0A0A0A;
-  --card:    #111814;
-  --card2:   #0d1610;
-  --border:  rgba(0,255,159,0.18);
-  --border2: rgba(0,255,159,0.3);
-  --text:    #E8F5EC;
-  --muted:   #4a7a5a;
-  --mono:    'Space Mono',monospace;
-  --display: 'Orbitron',sans-serif;
-  --body:    'Inter',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{
-  background:var(--black);
-  color:var(--text);
-  font-family:var(--body);
-  overflow-x:hidden;
-  min-height:100vh;
-}
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GREENAVAX</title>
+  <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;700&display=swap" rel="stylesheet"/>
+  <!-- Proxima Nova via Adobe Fonts fallback — using closest Google match -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js"></script>
+  <style>
+    :root {
+      --green:       #00ff7f;
+      --green-dim:   #00c45e;
+      --green-dark:  #004d26;
+      --gold:        #d4a017;
+      --gold-light:  #f5c842;
+      --gold-bright: #ffe066;
+      --red:         #ff3b3b;
+      --red-dim:     #c42a2a;
+      --bg:          #030a05;
+      --card:        rgba(8, 22, 12, 0.85);
+      --border:      rgba(0,255,127,0.12);
+      --border-gold: rgba(212,160,23,0.35);
+      --text:        #cce8d4;
+      --muted:       #3d6b4a;
+      --font-head:   'Orbitron', sans-serif;
+      --font-body:   'Nunito Sans', sans-serif;
+      --font-label:  'Rajdhani', sans-serif;
+    }
 
-/* ── COSMIC BACKGROUND ── */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background:
-    radial-gradient(ellipse at 20% 10%, rgba(0,255,159,0.06) 0%, transparent 45%),
-    radial-gradient(ellipse at 80% 60%, rgba(57,255,20,0.04) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 100%, rgba(0,176,116,0.05) 0%, transparent 50%);
-  pointer-events:none;z-index:0;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── GRID BG ── */
-body::after{
-  content:'';
-  position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(0,255,159,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,159,0.03) 1px, transparent 1px);
-  background-size:60px 60px;
-  pointer-events:none;z-index:0;
-}
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-/* ── PARTICLES ── */
-.particles{
-  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
-}
-.particle{
-  position:absolute;
-  width:2px;height:2px;
-  background:var(--lime);
-  border-radius:50%;
-  opacity:0;
-  animation:float-up linear infinite;
-}
-@keyframes float-up{
-  0%{transform:translateY(100vh) translateX(0);opacity:0;}
-  10%{opacity:0.6;}
-  90%{opacity:0.2;}
-  100%{transform:translateY(-20px) translateX(40px);opacity:0;}
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-/* ── HEADER ── */
-header{
-  position:sticky;top:0;z-index:200;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:18px 6%;
-  background:rgba(10,10,10,0.92);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(20px);
-}
-.logo{display:flex;align-items:center;gap:11px;cursor:pointer;}
-.logo-mark{
-  width:36px;height:36px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,#39FF14,#00B074);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 16px rgba(57,255,20,0.45);
-}
-.logo-mark svg{width:22px;height:22px;}
-.logo-name{
-  font-family:var(--display);
-  font-size:18px;font-weight:800;
-  color:#fff;letter-spacing:0.04em;
-  text-shadow:0 0 20px rgba(0,255,159,0.4);
-}
-.header-right{display:flex;align-items:center;gap:12px;}
-.net-pill{
-  display:flex;align-items:center;gap:7px;
-  padding:7px 14px;border-radius:20px;
-  background:rgba(0,255,159,0.06);
-  border:1px solid var(--border);
-  font-size:11px;color:var(--muted);
-  font-family:var(--mono);letter-spacing:0.06em;
-}
-.net-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--lime);
-  box-shadow:0 0 8px var(--lime);
-  animation:pulse-dot 2s infinite;
-}
-@keyframes pulse-dot{
-  0%,100%{box-shadow:0 0 8px var(--lime);}
-  50%{box-shadow:0 0 16px var(--lime),0 0 24px rgba(0,255,159,0.3);}
-}
-.connect-btn{
-  display:flex;align-items:center;gap:8px;
-  padding:11px 24px;border-radius:8px;
-  border:1.5px solid var(--lime);
-  background:transparent;
-  color:var(--lime);
-  font-family:var(--display);
-  font-size:11px;font-weight:700;
-  letter-spacing:0.08em;
-  cursor:pointer;
-  transition:all 0.2s;
-  position:relative;overflow:hidden;
-}
-.connect-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,255,159,0.12),transparent);
-  opacity:0;transition:opacity 0.2s;
-}
-.connect-btn:hover{
-  background:var(--lime);color:#0A0A0A;
-  box-shadow:0 0 28px rgba(0,255,159,0.5),0 0 60px rgba(0,255,159,0.2);
-  transform:translateY(-1px);
-}
-.connect-btn:hover::before{opacity:1;}
-.connect-btn.connected{
-  background:rgba(0,255,159,0.07);
-  border-color:rgba(0,255,159,0.3);
-  color:var(--lime);
-  font-family:var(--mono);font-size:12px;font-weight:400;
-}
+    /* ═══════════════════════════════════════
+       CANVAS BACKGROUND — cosmic green weave
+    ═══════════════════════════════════════ */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.55;
+    }
 
-/* ── WALLET BAR ── */
-.wallet-bar{
-  display:none;
-  background:rgba(0,176,116,0.06);
-  border-bottom:1px solid var(--border);
-  padding:10px 6%;gap:28px;flex-wrap:wrap;
-  position:relative;z-index:10;
-}
-.wallet-bar.show{display:flex;align-items:center;}
-.wb-item{display:flex;flex-direction:column;gap:1px;}
-.wb-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;}
-.wb-val{font-size:13px;color:var(--lime);font-family:var(--mono);font-weight:700;}
+    /* ═══════════════════════════════════════
+       CONTENT WRAPPER
+    ═══════════════════════════════════════ */
+    .content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 920px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px;
+    }
 
-/* ── HERO ── */
-.hero{
-  display:grid;
-  grid-template-columns:1fr 500px;
-  align-items:center;
-  padding:70px 6% 50px;
-  gap:30px;
-  position:relative;z-index:1;
-  min-height:88vh;
-}
-.hero-left{display:flex;flex-direction:column;}
-.campaign-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:7px 16px;border-radius:30px;
-  background:rgba(0,255,159,0.07);
-  border:1px solid rgba(0,255,159,0.22);
-  font-size:11px;color:rgba(0,255,159,0.75);
-  font-family:var(--mono);letter-spacing:0.08em;
-  text-transform:uppercase;
-  margin-bottom:28px;width:fit-content;
-}
-.hero-h1{
-  font-family:var(--display);
-  font-size:74px;font-weight:900;
-  line-height:0.92;letter-spacing:-0.02em;
-  color:#fff;margin-bottom:6px;
-  text-shadow:0 0 40px rgba(255,255,255,0.1);
-}
-.hero-h2{
-  font-family:var(--display);
-  font-size:52px;font-weight:900;
-  line-height:1;letter-spacing:-0.01em;
-  color:var(--lime);
-  margin-bottom:28px;
-  text-shadow:0 0 40px rgba(0,255,159,0.45),0 0 80px rgba(0,255,159,0.15);
-}
-.hero-sub{
-  font-size:16px;color:rgba(232,245,236,0.65);
-  line-height:1.75;max-width:480px;margin-bottom:36px;
-}
-.hero-sub strong{color:var(--lime);}
-.pillars{display:flex;gap:24px;flex-wrap:wrap;}
-.pillar{display:flex;align-items:center;gap:10px;}
-.pillar-orb{
-  width:34px;height:34px;border-radius:50%;flex-shrink:0;
-  background:rgba(0,255,159,0.08);
-  border:1px solid rgba(0,255,159,0.25);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;
-  box-shadow:0 0 12px rgba(0,255,159,0.1);
-}
-.pillar-name{
-  font-size:11px;font-weight:800;color:#fff;
-  text-transform:uppercase;letter-spacing:0.07em;
-  font-family:var(--display);
-}
-.pillar-sub{font-size:10px;color:var(--muted);}
+    /* ═══════════════════════════════════════
+       TOP BADGE
+    ═══════════════════════════════════════ */
+    .top-badge {
+      margin-top: 36px;
+      font-family: var(--font-label);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      padding: 6px 18px;
+      background: rgba(0,255,127,0.03);
+    }
 
-/* ── HERO TREE ── */
-.hero-right{
-  position:relative;display:flex;
-  align-items:center;justify-content:center;
-}
-.tree-container{
-  position:relative;width:480px;height:480px;
-}
-.tree-glow-orb{
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:320px;height:320px;
-  background:radial-gradient(circle,rgba(0,255,159,0.12) 0%,transparent 65%);
-  border-radius:50%;
-  animation:breathe 4s ease-in-out infinite;
-}
-@keyframes breathe{
-  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.8;}
-  50%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
-}
-.tree-container svg{position:relative;z-index:1;}
+    /* ═══════════════════════════════════════
+       PROOF OF CONSERVATION
+    ═══════════════════════════════════════ */
+    .poc-label {
+      margin-top: 28px;
+      font-family: var(--font-label);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
 
-/* ── STATS BAR ── */
-.stats-bar{
-  margin:0 6% 52px;
-  background:rgba(17,24,20,0.85);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:24px 36px;
-  display:flex;align-items:center;
-  position:relative;z-index:1;
-  backdrop-filter:blur(10px);
-  box-shadow:0 0 40px rgba(0,255,159,0.05),inset 0 1px 0 rgba(0,255,159,0.08);
-}
-.stat-item{
-  flex:1;display:flex;align-items:center;gap:16px;
-}
-.stat-item+.stat-item{
-  border-left:1px solid rgba(0,255,159,0.1);
-  padding-left:32px;
-}
-.stat-orb{
-  width:42px;height:42px;border-radius:12px;flex-shrink:0;
-  background:rgba(0,255,159,0.07);
-  border:1px solid rgba(0,255,159,0.18);
-  display:flex;align-items:center;justify-content:center;
-  font-size:19px;
-  box-shadow:inset 0 1px 0 rgba(0,255,159,0.1);
-}
-.stat-label{
-  font-size:9px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:0.1em;
-  font-weight:700;margin-bottom:4px;
-}
-.stat-val{
-  font-family:var(--display);
-  font-size:18px;font-weight:800;color:var(--lime);
-  text-shadow:0 0 16px rgba(0,255,159,0.35);
-}
-.stat-val.w{color:#fff;text-shadow:none;}
+    /* ═══════════════════════════════════════
+       GREENAVAX HERO TITLE — gold/green
+    ═══════════════════════════════════════ */
+    .hero-title {
+      margin-top: 10px;
+      font-family: var(--font-head);
+      font-size: clamp(40px, 9vw, 82px);
+      font-weight: 900;
+      letter-spacing: 4px;
+      line-height: 1;
+      text-align: center;
+      background: linear-gradient(
+        135deg,
+        var(--gold-bright) 0%,
+        var(--gold-light)  20%,
+        var(--green)       45%,
+        var(--gold)        65%,
+        var(--gold-bright) 80%,
+        var(--green-dim)   100%
+      );
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 28px rgba(212,160,23,0.4)) drop-shadow(0 0 60px rgba(0,255,127,0.2));
+      animation: shimmer 5s linear infinite;
+      background-size: 300% 300%;
+    }
 
-/* ── QUESTS SECTION ── */
-.quests-section{padding:0 6% 68px;position:relative;z-index:1;}
-.section-header{
-  display:flex;align-items:center;gap:18px;margin-bottom:32px;
-}
-.s-line{
-  flex:1;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(0,255,159,0.25),transparent);
-}
-.s-diamond{
-  width:10px;height:10px;
-  background:var(--lime);transform:rotate(45deg);flex-shrink:0;
-  box-shadow:0 0 12px var(--lime),0 0 24px rgba(0,255,159,0.4);
-}
-.section-title{
-  font-family:var(--display);
-  font-size:20px;font-weight:800;
-  color:#fff;letter-spacing:0.2em;text-transform:uppercase;
-  text-shadow:0 0 20px rgba(0,255,159,0.2);
-}
-.quest-list{display:flex;flex-direction:column;gap:14px;}
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-/* ── QUEST CARD ── */
-.quest-card{
-  background:rgba(13,22,16,0.9);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:22px 26px;
-  display:flex;align-items:center;gap:20px;
-  cursor:pointer;
-  transition:all 0.22s;
-  position:relative;overflow:hidden;
-  backdrop-filter:blur(8px);
-}
-.quest-card::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  width:3px;
-  background:linear-gradient(180deg,var(--lime),var(--forest));
-  opacity:0;transition:opacity 0.2s;
-  border-radius:0 2px 2px 0;
-}
-.quest-card:hover{
-  border-color:rgba(0,255,159,0.45);
-  transform:translateY(-3px);
-  box-shadow:0 12px 40px rgba(0,255,159,0.08),0 0 0 1px rgba(0,255,159,0.1);
-}
-.quest-card:hover::before{opacity:1;}
-.quest-card.done{
-  border-color:rgba(0,255,159,0.28);
-  background:rgba(0,176,116,0.06);
-}
-.quest-card.done::before{opacity:1;}
-.quest-card.locked{
-  opacity:0.32;pointer-events:none;
-  filter:grayscale(0.5);
-}
+    .hero-sub {
+      margin-top: 8px;
+      font-family: var(--font-label);
+      font-size: 12px;
+      letter-spacing: 5px;
+      color: var(--gold);
+      opacity: 0.65;
+      text-transform: uppercase;
+    }
 
-/* quest icon */
-.q-icon{
-  width:54px;height:54px;flex-shrink:0;
-  border-radius:14px;
-  background:rgba(0,255,159,0.08);
-  border:1px solid rgba(0,255,159,0.2);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:inset 0 1px 0 rgba(0,255,159,0.1),0 0 16px rgba(0,255,159,0.06);
-  transition:all 0.2s;
-}
-.quest-card:hover .q-icon{
-  background:rgba(0,255,159,0.12);
-  box-shadow:inset 0 1px 0 rgba(0,255,159,0.15),0 0 24px rgba(0,255,159,0.12);
-}
-.quest-card.done .q-icon{
-  background:rgba(0,255,159,0.15);
-  border-color:rgba(0,255,159,0.35);
-}
+    /* ═══════════════════════════════════════
+       CONNECT WALLET BUTTON
+    ═══════════════════════════════════════ */
+    #connectBtn {
+      margin-top: 28px;
+      padding: 15px 48px;
+      background: transparent;
+      border: 1.5px solid var(--green);
+      color: var(--green);
+      font-family: var(--font-label);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    #connectBtn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--green);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s;
+      z-index: -1;
+    }
+    #connectBtn:hover::before { transform: scaleX(1); }
+    #connectBtn:hover { color: var(--bg); }
+    #connectBtn.connected {
+      border-color: var(--gold);
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 2px;
+      cursor: default;
+    }
+    #connectBtn.connected::before { display: none; }
 
-/* quest body */
-.q-body{flex:1;min-width:0;}
-.q-name{
-  font-size:16px;font-weight:700;color:#fff;
-  margin-bottom:5px;letter-spacing:-0.01em;
-}
-.q-desc{
-  font-size:13px;color:rgba(232,245,236,0.5);
-  margin-bottom:10px;line-height:1.5;
-}
-.q-desc a{color:var(--lime);text-decoration:none;}
-.q-desc a:hover{text-decoration:underline;}
-.q-step{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:3px 10px;border-radius:20px;
-  background:rgba(0,255,159,0.06);
-  border:1px solid rgba(0,255,159,0.15);
-  font-size:9px;font-weight:800;color:var(--muted);
-  letter-spacing:0.1em;text-transform:uppercase;
-  font-family:var(--mono);
-}
+    #walletInfo {
+      margin-top: 10px;
+      font-family: var(--font-label);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      min-height: 16px;
+      text-transform: uppercase;
+    }
 
-/* chevron */
-.q-chevron{
-  font-size:24px;color:rgba(0,255,159,0.25);
-  flex-shrink:0;transition:all 0.2s;
-  font-weight:300;
-}
-.quest-card:hover .q-chevron{
-  color:var(--lime);
-  transform:translateX(3px);
-  text-shadow:0 0 10px var(--lime);
-}
-.quest-card.done .q-chevron{color:var(--lime);}
+    /* ═══════════════════════════════════════
+       DIVIDER
+    ═══════════════════════════════════════ */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green-dim), var(--gold), var(--green-dim), transparent);
+      margin: 40px 0 32px;
+      opacity: 0.4;
+    }
 
-/* reward box */
-.q-reward{
-  flex-shrink:0;min-width:114px;
-  background:rgba(0,255,159,0.05);
-  border:1px solid rgba(0,255,159,0.18);
-  border-radius:12px;
-  padding:14px 16px;text-align:center;
-  transition:all 0.2s;
-}
-.quest-card:hover .q-reward{
-  background:rgba(0,255,159,0.08);
-  border-color:rgba(0,255,159,0.3);
-  box-shadow:0 0 20px rgba(0,255,159,0.08);
-}
-.quest-card.done .q-reward{
-  background:rgba(0,255,159,0.1);
-  border-color:rgba(0,255,159,0.32);
-}
-.qr-label{
-  font-size:8px;font-weight:800;color:var(--muted);
-  text-transform:uppercase;letter-spacing:0.12em;
-  font-family:var(--mono);margin-bottom:5px;
-}
-.qr-amount{
-  font-family:var(--display);
-  font-size:28px;font-weight:900;color:var(--lime);
-  line-height:1;
-  text-shadow:0 0 20px rgba(0,255,159,0.5);
-}
-.qr-unit{
-  font-size:11px;font-weight:700;color:var(--lime);
-  opacity:0.8;margin-bottom:3px;
-  font-family:var(--display);letter-spacing:0.05em;
-}
-.qr-xp{
-  font-size:10px;color:var(--gold);
-  font-weight:700;font-family:var(--mono);
-  text-shadow:0 0 8px rgba(212,255,77,0.4);
-}
+    /* ═══════════════════════════════════════
+       SECTION HEADING
+    ═══════════════════════════════════════ */
+    .section-heading {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-heading h2 {
+      font-family: var(--font-head);
+      font-size: clamp(14px, 3vw, 20px);
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .section-heading p {
+      margin-top: 8px;
+      font-family: var(--font-label);
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--muted);
+    }
 
-/* action button — same style as connect wallet */
-.q-btn{
-  flex-shrink:0;
-  padding:12px 22px;
-  border-radius:8px;
-  border:1.5px solid var(--lime);
-  background:transparent;
-  color:var(--lime);
-  font-family:var(--display);
-  font-size:11px;font-weight:700;
-  letter-spacing:0.08em;
-  cursor:pointer;
-  transition:all 0.2s;
-  white-space:nowrap;
-  position:relative;overflow:hidden;
-  z-index:2;
-}
-.q-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,255,159,0.15),transparent);
-  opacity:0;transition:opacity 0.2s;
-}
-.q-btn:hover{
-  background:var(--lime);
-  color:#0A0A0A;
-  box-shadow:0 0 28px rgba(0,255,159,0.5),0 0 60px rgba(0,255,159,0.2);
-  transform:translateY(-1px);
-}
-.q-btn:hover::before{opacity:1;}
-.q-btn:active{transform:translateY(0) scale(0.98);}
-.q-btn.done-btn{
-  border-color:rgba(0,255,159,0.22);
-  color:rgba(0,255,159,0.45);
-  cursor:default;
-  background:rgba(0,255,159,0.04);
-}
-.q-btn.done-btn:hover{
-  background:rgba(0,255,159,0.04);
-  color:rgba(0,255,159,0.45);
-  box-shadow:none;transform:none;
-}
+    /* ═══════════════════════════════════════
+       RANK GRID — 2 rows × 3 cols
+    ═══════════════════════════════════════ */
+    #rankGrid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding-bottom: 8px;
+    }
 
-/* ── AIRDROP BANNER ── */
-.airdrop-banner{
-  margin:0 6% 52px;
-  background:linear-gradient(120deg,rgba(0,26,14,0.95) 0%,rgba(0,40,22,0.9) 50%,rgba(0,26,14,0.95) 100%);
-  border:1px solid rgba(0,255,159,0.22);
-  border-radius:18px;
-  padding:32px 40px;
-  display:flex;align-items:center;gap:28px;
-  position:relative;overflow:hidden;z-index:1;
-  backdrop-filter:blur(10px);
-  box-shadow:0 0 60px rgba(0,255,159,0.06),inset 0 1px 0 rgba(0,255,159,0.1);
-}
-.ab-glow{
-  position:absolute;right:-30px;top:-30px;
-  width:280px;height:280px;
-  background:radial-gradient(circle,rgba(0,255,159,0.12) 0%,transparent 65%);
-  pointer-events:none;
-  animation:breathe 5s ease-in-out infinite;
-}
-.ab-icon-wrap{
-  width:58px;height:58px;border-radius:16px;flex-shrink:0;
-  background:rgba(0,255,159,0.1);
-  border:1px solid rgba(0,255,159,0.28);
-  display:flex;align-items:center;justify-content:center;
-  font-size:28px;
-  box-shadow:0 0 24px rgba(0,255,159,0.15);
-}
-.ab-body{flex:1;position:relative;z-index:1;}
-.ab-body p{
-  font-size:16px;color:rgba(232,245,236,0.6);
-  font-weight:500;margin-bottom:5px;
-}
-.ab-body strong{
-  font-family:var(--display);
-  font-size:24px;font-weight:900;color:var(--lime);
-  text-shadow:0 0 30px rgba(0,255,159,0.45);
-  letter-spacing:0.02em;
-}
-.ab-coins{display:flex;gap:12px;align-items:center;position:relative;z-index:1;}
-.ab-coin{
-  border-radius:50%;
-  background:rgba(0,255,159,0.08);
-  border:2px solid rgba(0,255,159,0.22);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 12px rgba(0,255,159,0.1);
-  animation:orbit 6s ease-in-out infinite;
-}
-.ab-coin:nth-child(2){animation-delay:2s;}
-.ab-coin:nth-child(3){animation-delay:4s;}
-@keyframes orbit{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-6px);}
-}
+    @media (max-width: 640px) {
+      #rankGrid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      #rankGrid { grid-template-columns: 1fr; }
+    }
 
-/* ── FOOTER ── */
-footer{
-  border-top:1px solid rgba(0,255,159,0.1);
-  padding:26px 6%;
-  display:flex;justify-content:space-between;align-items:center;
-  flex-wrap:wrap;gap:16px;
-  position:relative;z-index:1;
-  background:rgba(10,10,10,0.8);
-}
-.footer-tagline{
-  font-size:12px;color:var(--muted);
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--mono);
-}
-.footer-tagline span{color:#fff;font-weight:700;}
-.footer-icons{display:flex;gap:10px;}
-.f-icon{
-  width:36px;height:36px;border-radius:9px;
-  border:1px solid rgba(0,255,159,0.15);
-  background:rgba(0,255,159,0.04);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all 0.18s;text-decoration:none;
-}
-.f-icon:hover{
-  border-color:var(--lime);
-  background:rgba(0,255,159,0.1);
-  box-shadow:0 0 16px rgba(0,255,159,0.2);
-  transform:translateY(-2px);
-}
-.f-icon svg{width:15px;height:15px;fill:var(--muted);}
-.f-icon:hover svg{fill:var(--lime);}
+    /* ═══════════════════════════════════════
+       RANK CARD
+    ═══════════════════════════════════════ */
+    .rank-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 22px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .rank-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green-dim), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .rank-card:hover::before { opacity: 1; }
+    .rank-card:hover {
+      border-color: rgba(0,255,127,0.3);
+      transform: translateY(-2px);
+    }
+    .rank-card.claimed-card {
+      border-color: rgba(0,196,94,0.4);
+    }
+    .rank-card.claimed-card::before {
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      opacity: 0.8;
+    }
 
-/* ── MODAL ── */
-.overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,0.88);
-  z-index:500;align-items:center;justify-content:center;
-  backdrop-filter:blur(8px);
-}
-.overlay.open{display:flex;}
-.modal{
-  background:rgba(13,22,16,0.98);
-  border:1px solid rgba(0,255,159,0.25);
-  border-radius:20px;padding:32px;
-  width:440px;max-width:94vw;
-  position:relative;
-  box-shadow:0 0 60px rgba(0,255,159,0.08),0 40px 80px rgba(0,0,0,0.6);
-}
-.modal-close{
-  position:absolute;top:18px;right:20px;
-  background:none;border:none;cursor:pointer;
-  color:var(--muted);font-size:22px;line-height:1;
-  transition:all 0.15s;
-}
-.modal-close:hover{color:var(--lime);transform:scale(1.1);}
-.modal h3{
-  font-family:var(--display);
-  font-size:18px;font-weight:800;color:#fff;
-  margin-bottom:8px;padding-right:28px;
-  letter-spacing:0.02em;
-}
-.modal-desc{
-  font-size:13px;color:rgba(232,245,236,0.55);
-  line-height:1.7;margin-bottom:20px;
-}
-.ext-link{
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  padding:14px;
-  background:rgba(0,255,159,0.06);
-  border:1px solid rgba(0,255,159,0.22);
-  border-radius:12px;
-  color:var(--lime);font-size:13px;font-weight:700;
-  text-decoration:none;margin-bottom:14px;
-  transition:all 0.18s;font-family:var(--display);
-  letter-spacing:0.04em;
-}
-.ext-link:hover{
-  border-color:var(--lime);
-  background:rgba(0,255,159,0.1);
-  box-shadow:0 0 20px rgba(0,255,159,0.15);
-  transform:translateY(-1px);
-}
-.w-opt{
-  display:flex;align-items:center;gap:14px;
-  padding:14px 16px;border-radius:12px;
-  border:1px solid rgba(0,255,159,0.13);
-  margin-bottom:10px;cursor:pointer;transition:all 0.18s;
-}
-.w-opt:hover{
-  border-color:rgba(0,255,159,0.4);
-  background:rgba(0,255,159,0.05);
-  transform:translateX(3px);
-}
-.w-logo{
-  width:38px;height:38px;border-radius:10px;
-  background:rgba(0,255,159,0.08);
-  border:1px solid rgba(0,255,159,0.15);
-  display:flex;align-items:center;justify-content:center;font-size:19px;
-}
-.w-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px;}
-.w-sub{font-size:11px;color:var(--muted);}
-.addr-inp{
-  width:100%;
-  background:rgba(0,0,0,0.6);
-  border:1px solid rgba(0,255,159,0.18);
-  border-radius:10px;
-  padding:13px 16px;
-  color:#fff;font-size:13px;
-  font-family:var(--mono);
-  outline:none;margin-bottom:6px;
-  transition:border-color 0.15s;
-}
-.addr-inp:focus{border-color:var(--lime);box-shadow:0 0 12px rgba(0,255,159,0.1);}
-.addr-inp::placeholder{color:rgba(74,122,90,0.6);}
-.addr-hint{font-size:11px;color:var(--muted);margin-bottom:16px;font-family:var(--mono);}
-.m-actions{display:flex;gap:10px;}
-.btn-cancel{
-  flex:1;padding:12px;border-radius:10px;
-  border:1px solid rgba(0,255,159,0.15);
-  background:transparent;color:var(--muted);
-  cursor:pointer;font-size:12px;font-weight:600;
-  font-family:var(--body);transition:all 0.15s;
-}
-.btn-cancel:hover{border-color:rgba(0,255,159,0.3);color:#fff;}
-.btn-submit{
-  flex:2;padding:12px;border-radius:10px;
-  border:none;background:var(--lime);color:#0A0A0A;
-  cursor:pointer;font-size:12px;font-weight:800;
-  font-family:var(--display);letter-spacing:0.06em;
-  transition:all 0.18s;
-}
-.btn-submit:hover{
-  background:#39FF14;
-  box-shadow:0 0 24px rgba(0,255,159,0.5);
-  transform:translateY(-1px);
-}
-.pending-note{
-  background:rgba(0,255,159,0.04);
-  border:1px solid rgba(0,255,159,0.1);
-  border-radius:10px;padding:12px 14px;
-  font-size:11px;color:var(--muted);
-  line-height:1.7;margin-top:14px;
-}
+    /* corner accent */
+    .rank-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 32px; height: 32px;
+      border-top: 1px solid var(--border-gold);
+      border-left: 1px solid var(--border-gold);
+      opacity: 0.5;
+    }
 
-/* ── TOAST ── */
-.toast{
-  position:fixed;bottom:28px;left:50%;
-  transform:translateX(-50%) translateY(16px);
-  background:rgba(13,22,16,0.97);
-  border:1px solid rgba(0,255,159,0.4);
-  border-radius:12px;padding:13px 24px;
-  font-size:13px;color:var(--lime);font-weight:600;
-  display:flex;align-items:center;gap:10px;
-  opacity:0;transition:all 0.3s;
-  pointer-events:none;z-index:600;white-space:nowrap;
-  box-shadow:0 0 30px rgba(0,255,159,0.15);
-  font-family:var(--body);
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.err{border-color:rgba(248,113,113,0.4);color:#f87171;background:rgba(26,5,5,0.97);}
+    .rank-number {
+      font-family: var(--font-head);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--gold);
+      opacity: 0.6;
+      text-transform: uppercase;
+    }
 
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .hero{grid-template-columns:1fr;min-height:auto;padding:44px 5% 32px;}
-  .hero-right{display:none;}
-  .hero-h1{font-size:48px;}
-  .hero-h2{font-size:34px;}
-  .stats-bar{margin:0 5% 36px;flex-direction:column;gap:18px;padding:20px 22px;}
-  .stat-item+.stat-item{border-left:none;border-top:1px solid rgba(0,255,159,0.08);padding-left:0;padding-top:18px;}
-  .quests-section{padding:0 5% 44px;}
-  .airdrop-banner{margin:0 5% 40px;flex-wrap:wrap;padding:24px;}
-  header{padding:15px 5%;}
-  footer{padding:20px 5%;}
-  .quest-card{flex-wrap:wrap;gap:14px;}
-}
-</style>
+    .rank-name {
+      font-family: var(--font-head);
+      font-size: clamp(13px, 2.2vw, 17px);
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .rank-price {
+      font-family: var(--font-label);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: 1px;
+    }
+
+    .rank-desc {
+      font-family: var(--font-body);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    /* ═══════════════════════════════════════
+       CLAIM BUTTON
+    ═══════════════════════════════════════ */
+    .claim-btn {
+      margin-top: 10px;
+      padding: 11px 8px;
+      width: 100%;
+      border: none;
+      font-family: var(--font-label);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .claim-btn.unclaimed {
+      background: var(--red);
+      color: #fff;
+    }
+    .claim-btn.unclaimed:hover:not(:disabled) {
+      background: #ff5555;
+      letter-spacing: 4px;
+    }
+    .claim-btn.unclaimed:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .claim-btn.claimed {
+      background: var(--green);
+      color: var(--bg);
+      cursor: default;
+      font-weight: 900;
+    }
+
+    /* ═══════════════════════════════════════
+       INFO STRIP
+    ═══════════════════════════════════════ */
+    .info-strip {
+      margin-top: 36px;
+      width: 100%;
+      border: 1px solid var(--border-gold);
+      background: rgba(212,160,23,0.04);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .info-item {
+      font-family: var(--font-label);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--gold);
+      opacity: 0.7;
+      text-transform: uppercase;
+    }
+    .info-item span {
+      color: var(--green);
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════
+       SOCIAL FOOTER
+    ═══════════════════════════════════════ */
+    .social-footer {
+      margin-top: 44px;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .social-label {
+      font-family: var(--font-label);
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .social-buttons {
+      display: flex;
+      gap: 16px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 28px;
+      border: 1.5px solid;
+      font-family: var(--font-label);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .social-btn.twitter {
+      border-color: rgba(255,255,255,0.2);
+      color: #e0e0e0;
+      background: rgba(255,255,255,0.03);
+    }
+    .social-btn.twitter:hover {
+      border-color: #fff;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .social-btn.telegram {
+      border-color: rgba(41,182,246,0.35);
+      color: #29b6f6;
+      background: rgba(41,182,246,0.04);
+    }
+    .social-btn.telegram:hover {
+      border-color: #29b6f6;
+      background: rgba(41,182,246,0.1);
+    }
+
+    .social-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .copyright {
+      font-family: var(--font-label);
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      opacity: 0.5;
+      text-align: center;
+    }
+
+    /* ═══════════════════════════════════════
+       STATUS TOAST
+    ═══════════════════════════════════════ */
+    #statusMsg {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(8,22,12,0.95);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-label);
+      font-size: 12px;
+      letter-spacing: 2px;
+      padding: 14px 28px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    #statusMsg.show   { opacity: 1; }
+    #statusMsg.error  { border-color: var(--red);   color: var(--red); }
+    #statusMsg.success{ border-color: var(--green);  color: var(--green); }
+
+    /* ═══════════════════════════════════════
+       LOADING OVERLAY
+    ═══════════════════════════════════════ */
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3,10,5,0.88);
+      z-index: 150;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(4px);
+    }
+    #loadingOverlay.active { display: flex; }
+    .loading-text {
+      font-family: var(--font-head);
+      font-size: 22px;
+      letter-spacing: 8px;
+      color: var(--green);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .loading-sub {
+      font-family: var(--font-label);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--muted);
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- PARTICLES -->
-<div class="particles" id="particles"></div>
+<!-- ═══ BACKGROUND CANVAS ═══ -->
+<canvas id="bgCanvas"></canvas>
 
-<!-- HEADER -->
-<header>
-  <div class="logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="50" fill="rgba(0,0,0,0.3)"/>
-        <polygon points="50,14 78,67 22,67" fill="white" opacity="0.96"/>
-        <polygon points="50,28 70,67 30,67" fill="rgba(0,176,116,0.8)"/>
-        <polygon points="50,58 66,82 34,82" fill="white" opacity="0.9"/>
-        <polygon points="50,67 62,82 38,82" fill="rgba(0,176,116,0.8)"/>
-      </svg>
-    </div>
-    <span class="logo-name">GRAVAX</span>
-  </div>
-  <div class="header-right">
-    <div class="net-pill">
-      <span class="net-dot"></span>
-      AVALANCHE C-CHAIN
-    </div>
-    <button class="connect-btn" id="connectBtn" onclick="connectWallet()">
-      CONNECT WALLET
-    </button>
-  </div>
-</header>
+<div class="content">
 
-<!-- WALLET BAR -->
-<div class="wallet-bar" id="walletBar">
-  <div class="wb-item"><span class="wb-label">Wallet</span><span class="wb-val" id="wbAddr">—</span></div>
-  <div class="wb-item"><span class="wb-label">GRAV Balance</span><span class="wb-val" id="wbBal">—</span></div>
-  <div class="wb-item"><span class="wb-label">Quests Done</span><span class="wb-val" id="wbDone">0 / 4</span></div>
-  <div class="wb-item"><span class="wb-label">GRAV Earned</span><span class="wb-val" id="wbEarned">0 GRAV</span></div>
+  <!-- ═══ TOP BADGE ═══ -->
+  <div class="top-badge">AVAX C-CHAIN · MAINNET · ON-CHAIN RANKS</div>
+
+  <!-- ═══ PROOF OF CONSERVATION ═══ -->
+  <div class="poc-label">⬡ PROOF OF CONSERVATION ⬡</div>
+
+  <!-- ═══ HERO TITLE ═══ -->
+  <div class="hero-title">GREENAVAX</div>
+  <div class="hero-sub">Guardian Rank Protocol</div>
+
+  <!-- ═══ CONNECT WALLET ═══ -->
+  <button id="connectBtn" onclick="connectWallet()">⬡ CONNECT WALLET</button>
+  <div id="walletInfo"></div>
+
+  <!-- ═══ DIVIDER ═══ -->
+  <div class="divider"></div>
+
+  <!-- ═══ SECTION HEADING ═══ -->
+  <div class="section-heading">
+    <h2>Claim Your Conservation Ranks</h2>
+    <p>Each rank unlocks $GRAV rewards · staking multipliers · NFTs · exclusive access · All on-chain</p>
+  </div>
+
+  <!-- ═══ RANK GRID ═══ -->
+  <div id="rankGrid"></div>
+
+  <!-- ═══ INFO STRIP ═══ -->
+  <div class="info-strip">
+    <div class="info-item">Payments → <span>Instant & Final</span></div>
+    <div class="info-item">Ranks → <span>Permanent On-Chain</span></div>
+    <div class="info-item">Memory → <span>Wallet-Bound Forever</span></div>
+    <div class="info-item">Network → <span>AVAX C-Chain</span></div>
+  </div>
+
+  <!-- ═══ SOCIAL FOOTER ═══ -->
+  <div class="social-footer">
+    <div class="social-label">Join the Network</div>
+    <div class="social-buttons">
+
+      <!-- X / Twitter -->
+      <a class="social-btn twitter" href="https://x.com/greenavax" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.738-8.835L1.254 2.25H8.08l4.262 5.633 5.902-5.633zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        TWITTER
+      </a>
+
+      <!-- Telegram -->
+      <a class="social-btn telegram" href="https://t.me/greenavax" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+        </svg>
+        TELEGRAM
+      </a>
+
+    </div>
+    <div class="copyright">© GREENAVAX · All ranks are permanent · Powered by AVAX C-Chain</div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ═══ STATUS TOAST ═══ -->
+<div id="statusMsg"></div>
+
+<!-- ═══ LOADING OVERLAY ═══ -->
+<div id="loadingOverlay">
+  <div class="loading-text">PROCESSING</div>
+  <div class="loading-sub">Confirm in your wallet · Do not close</div>
 </div>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-left">
-    <div class="campaign-badge">
-      <span class="net-dot"></span>
-      Season 1 · Live Now
-    </div>
-    <div class="hero-h1">GRAVAX</div>
-    <div class="hero-h2">AIRDROP CAMPAIGN</div>
-    <p class="hero-sub">
-      Join the mission. Complete quests, grow the ecosystem,<br>
-      and earn <strong>GRAV</strong> rewards on Avalanche C-Chain.
-    </p>
-    <div class="pillars">
-      <div class="pillar">
-        <div class="pillar-orb">🌱</div>
-        <div>
-          <div class="pillar-name">Conserve</div>
-          <div class="pillar-sub">for the future</div>
-        </div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-orb">🛡</div>
-        <div>
-          <div class="pillar-name">Verify</div>
-          <div class="pillar-sub">your actions</div>
-        </div>
-      </div>
-      <div class="pillar">
-        <div class="pillar-orb">🔺</div>
-        <div>
-          <div class="pillar-name">Tokenize</div>
-          <div class="pillar-sub">your impact</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="hero-right">
-    <div class="tree-container">
-      <div class="tree-glow-orb"></div>
-      <svg viewBox="0 0 480 480" width="480" height="480" xmlns="http://www.w3.org/2000/svg">
-        <!-- terrain grid -->
-        <path d="M20 420 Q120 385 240 400 Q360 415 460 375" stroke="#00FF9F" stroke-width="1" fill="none" opacity="0.28"/>
-        <path d="M20 438 Q120 405 240 418 Q360 432 460 394" stroke="#00FF9F" stroke-width="0.5" fill="none" opacity="0.18"/>
-        <line x1="70" y1="390" x2="70" y2="460" stroke="#00FF9F" stroke-width="0.4" opacity="0.2"/>
-        <line x1="160" y1="386" x2="160" y2="460" stroke="#00FF9F" stroke-width="0.4" opacity="0.2"/>
-        <line x1="240" y1="384" x2="240" y2="460" stroke="#00FF9F" stroke-width="0.4" opacity="0.2"/>
-        <line x1="320" y1="386" x2="320" y2="460" stroke="#00FF9F" stroke-width="0.4" opacity="0.2"/>
-        <line x1="410" y1="390" x2="410" y2="460" stroke="#00FF9F" stroke-width="0.4" opacity="0.2"/>
-        <!-- base glow -->
-        <ellipse cx="240" cy="415" rx="90" ry="10" fill="#00FF9F" opacity="0.09"/>
-        <!-- TRUNK -->
-        <path d="M222 410 Q226 340 230 270 Q234 200 232 135" stroke="#0a3a1a" stroke-width="24" fill="none" stroke-linecap="round"/>
-        <path d="M258 410 Q254 340 250 270 Q246 200 248 135" stroke="#0a3a1a" stroke-width="18" fill="none" stroke-linecap="round"/>
-        <path d="M240 406 Q240 330 240 255" stroke="#00B074" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.3"/>
-        <!-- roots -->
-        <path d="M230 410 Q210 430 185 438" stroke="#0a3a1a" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <path d="M250 410 Q270 430 295 438" stroke="#0a3a1a" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.7"/>
-        <path d="M240 412 Q240 440 240 452" stroke="#0a3a1a" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
-        <!-- CANOPY -->
-        <circle cx="240" cy="118" r="100" fill="#071a0c" opacity="0.97"/>
-        <circle cx="155" cy="152" r="72" fill="#071a0c" opacity="0.93"/>
-        <circle cx="325" cy="152" r="72" fill="#071a0c" opacity="0.93"/>
-        <circle cx="185" cy="74" r="62" fill="#040e06"/>
-        <circle cx="295" cy="74" r="62" fill="#040e06"/>
-        <circle cx="240" cy="52" r="56" fill="#030b05"/>
-        <!-- ── GRAVAX TOKEN COINS ── -->
-        <g transform="translate(172,66)">
-          <circle r="30" fill="#00FF9F" opacity="0.85"/>
-          <circle r="25" fill="#00B074"/>
-          <circle r="25" fill="url(#cg1)" opacity="0.3"/>
-          <polygon points="0,-14 12,8 -12,8" fill="white" opacity="0.95"/>
-          <polygon points="0,-6 6,8 -6,8" fill="#00B074"/>
-          <polygon points="0,5 10,20 -10,20" fill="white" opacity="0.85"/>
-          <polygon points="0,12 5,20 -5,20" fill="#00B074"/>
-        </g>
-        <g transform="translate(308,66)">
-          <circle r="27" fill="#00FF9F" opacity="0.85"/>
-          <circle r="22" fill="#00B074"/>
-          <polygon points="0,-12 10,7 -10,7" fill="white" opacity="0.95"/>
-          <polygon points="0,-5 5,7 -5,7" fill="#00B074"/>
-          <polygon points="0,4 8,17 -8,17" fill="white" opacity="0.85"/>
-          <polygon points="0,10 4,17 -4,17" fill="#00B074"/>
-        </g>
-        <g transform="translate(134,138)">
-          <circle r="32" fill="#00FF9F" opacity="0.88"/>
-          <circle r="27" fill="#00B074"/>
-          <polygon points="0,-15 13,9 -13,9" fill="white" opacity="0.95"/>
-          <polygon points="0,-6 7,9 -7,9" fill="#00B074"/>
-          <polygon points="0,5 11,21 -11,21" fill="white" opacity="0.85"/>
-          <polygon points="0,12 6,21 -6,21" fill="#00B074"/>
-        </g>
-        <g transform="translate(240,120)">
-          <circle r="36" fill="#00FF9F" opacity="0.9"/>
-          <circle r="30" fill="#00B074"/>
-          <polygon points="0,-17 14,10 -14,10" fill="white" opacity="0.95"/>
-          <polygon points="0,-7 7,10 -7,10" fill="#00B074"/>
-          <polygon points="0,6 12,24 -12,24" fill="white" opacity="0.85"/>
-          <polygon points="0,14 6,24 -6,24" fill="#00B074"/>
-        </g>
-        <g transform="translate(346,138)">
-          <circle r="30" fill="#00FF9F" opacity="0.88"/>
-          <circle r="25" fill="#00B074"/>
-          <polygon points="0,-14 12,8 -12,8" fill="white" opacity="0.95"/>
-          <polygon points="0,-6 6,8 -6,8" fill="#00B074"/>
-          <polygon points="0,5 10,19 -10,19" fill="white" opacity="0.85"/>
-          <polygon points="0,12 5,19 -5,19" fill="#00B074"/>
-        </g>
-        <g transform="translate(168,200)">
-          <circle r="27" fill="#00FF9F" opacity="0.85"/>
-          <circle r="22" fill="#00B074"/>
-          <polygon points="0,-12 10,7 -10,7" fill="white" opacity="0.95"/>
-          <polygon points="0,-5 5,7 -5,7" fill="#00B074"/>
-          <polygon points="0,3 8,15 -8,15" fill="white" opacity="0.85"/>
-          <polygon points="0,9 4,15 -4,15" fill="#00B074"/>
-        </g>
-        <g transform="translate(312,197)">
-          <circle r="26" fill="#00FF9F" opacity="0.85"/>
-          <circle r="21" fill="#00B074"/>
-          <polygon points="0,-12 10,7 -10,7" fill="white" opacity="0.95"/>
-          <polygon points="0,-5 5,7 -5,7" fill="#00B074"/>
-          <polygon points="0,3 8,15 -8,15" fill="white" opacity="0.85"/>
-          <polygon points="0,9 4,15 -4,15" fill="#00B074"/>
-        </g>
-        <!-- GREEN APPLES -->
-        <circle cx="213" cy="148" r="12" fill="#a3e635" opacity="0.92"/>
-        <path d="M213 136 Q218 130 224 134" stroke="#65a30d" stroke-width="2" fill="none"/>
-        <circle cx="264" cy="212" r="11" fill="#a3e635" opacity="0.88"/>
-        <path d="M264 201 Q269 195 275 199" stroke="#65a30d" stroke-width="1.8" fill="none"/>
-        <!-- BIG BOTTOM COIN -->
-        <g transform="translate(240,322)">
-          <circle r="46" fill="#00FF9F" opacity="0.1"/>
-          <circle r="38" fill="#00FF9F" opacity="0.88"/>
-          <circle r="31" fill="#00B074"/>
-          <polygon points="0,-18 16,11 -16,11" fill="white" opacity="0.95"/>
-          <polygon points="0,-7 8,11 -8,11" fill="#00B074"/>
-          <polygon points="0,7 13,26 -13,26" fill="white" opacity="0.85"/>
-          <polygon points="0,15 7,26 -7,26" fill="#00B074"/>
-        </g>
-      </svg>
-    </div>
-  </div>
-</section>
-
-<!-- STATS BAR -->
-<div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-orb">👥</div>
-    <div>
-      <div class="stat-label">Total Rewards</div>
-      <div class="stat-val">1,000,000 GRAV</div>
-    </div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-orb">🎁</div>
-    <div>
-      <div class="stat-label">Participants</div>
-      <div class="stat-val w" id="participantCount">—</div>
-    </div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-orb">🔗</div>
-    <div>
-      <div class="stat-label">Network</div>
-      <div class="stat-val w">AVALANCHE C-CHAIN</div>
-    </div>
-  </div>
-</div>
-
-<!-- QUESTS -->
-<section class="quests-section">
-  <div class="section-header">
-    <div class="s-line"></div>
-    <div class="s-diamond"></div>
-    <span class="section-title">QUESTS</span>
-    <div class="s-diamond"></div>
-    <div class="s-line"></div>
-  </div>
-  <div class="quest-list" id="questList"></div>
-</section>
-
-<!-- AIRDROP BANNER -->
-<div class="airdrop-banner">
-  <div class="ab-glow"></div>
-  <div class="ab-icon-wrap">🎁</div>
-  <div class="ab-body">
-    <p>Complete all quests to be eligible for the</p>
-    <strong>GRAVAX AIRDROP!</strong>
-  </div>
-  <div class="ab-coins">
-    <div class="ab-coin" style="width:50px;height:50px;">
-      <svg viewBox="0 0 100 100" width="32" height="32"><circle cx="50" cy="50" r="50" fill="#00B074"/><polygon points="50,14 78,67 22,67" fill="white" opacity="0.95"/><polygon points="50,28 70,67 30,67" fill="#00B074"/><polygon points="50,58 66,82 34,82" fill="white" opacity="0.9"/><polygon points="50,67 62,82 38,82" fill="#00B074"/></svg>
-    </div>
-    <div class="ab-coin" style="width:40px;height:40px;">
-      <svg viewBox="0 0 100 100" width="24" height="24"><circle cx="50" cy="50" r="50" fill="#00B074"/><polygon points="50,14 78,67 22,67" fill="white" opacity="0.95"/><polygon points="50,28 70,67 30,67" fill="#00B074"/><polygon points="50,58 66,80 34,80" fill="white" opacity="0.9"/><polygon points="50,67 62,80 38,80" fill="#00B074"/></svg>
-    </div>
-    <div class="ab-coin" style="width:30px;height:30px;">
-      <svg viewBox="0 0 100 100" width="18" height="18"><circle cx="50" cy="50" r="50" fill="#00B074"/><polygon points="50,14 78,67 22,67" fill="white" opacity="0.95"/><polygon points="50,28 70,67 30,67" fill="#00B074"/><polygon points="50,58 66,80 34,80" fill="white" opacity="0.9"/><polygon points="50,67 62,80 38,80" fill="#00B074"/></svg>
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="logo">
-    <div class="logo-mark" style="width:28px;height:28px;">
-      <svg viewBox="0 0 100 100" width="17" height="17"><circle cx="50" cy="50" r="50" fill="rgba(0,0,0,0.3)"/><polygon points="50,14 78,67 22,67" fill="white" opacity="0.96"/><polygon points="50,28 70,67 30,67" fill="rgba(0,176,116,0.8)"/><polygon points="50,58 66,82 34,82" fill="white" opacity="0.9"/><polygon points="50,67 62,82 38,82" fill="rgba(0,176,116,0.8)"/></svg>
-    </div>
-    <span class="logo-name" style="font-size:15px;">GRAVAX</span>
-  </div>
-  <div class="footer-tagline">
-    <span>Conserve</span> 🌱 —
-    <span>Verify</span> 🛡 —
-    <span>Tokenize</span> 🔺
-  </div>
-  <div class="footer-icons">
-    <a href="https://x.com/greenavax" target="_blank" class="f-icon" title="X / Twitter">
-      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-    </a>
-    <a href="#" class="f-icon" title="Discord">
-      <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.03.056a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-    </a>
-    <a href="#" class="f-icon" title="Website">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-    </a>
-  </div>
-</footer>
-
-<!-- MODAL -->
-<div class="overlay" id="overlay">
-  <div class="modal" id="modalBox"></div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"><span id="toastMsg"></span></div>
 
 <script>
-/* ══════════════════════════════════
-   CONFIG
-══════════════════════════════════ */
-const QUEST_CA  = "0xA076327BEFd98B550539077295EA7FB4549eda48";
-const TOKEN_CA  = "0xBB370Fdb0c0B9c717ECAbC5949d461F97F64979f";
-const CHAIN_ID  = "0xa86a"; // Avalanche mainnet 43114
-const SHEETS_URL = "PASTE_APPS_SCRIPT_URL_HERE"; // replace after Google Sheets setup
+// ═══════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════
+const CONTRACT_ADDRESS = "0xB2eE32B742ad50C023362bCd8e1A8f23F6D96859";
 
-const QUEST_ABI = [
-  "function getUserProgress(address) view returns (bool[4])",
-  "function totalEarned(address) view returns (uint256)",
-  "function participantCount() view returns (uint256)"
-];
-const TOKEN_ABI = [
-  "function balanceOf(address) view returns (uint256)",
-  "function decimals() view returns (uint8)"
+const ABI = [
+  "function claimRank(uint8 rankIndex) payable",
+  "function getRanks(address user) view returns (bool[6])",
+  "function getRankPrice(uint8 rankIndex) view returns (uint256)",
+  "function totalContributed(address) view returns (uint256)"
 ];
 
-/* ══════════════════════════════════
-   QUEST DEFINITIONS
-══════════════════════════════════ */
-const QUESTS = [
-  {
-    id:0, step:"STEP 1",
-    name:"Follow @greenavax",
-    desc:"Follow our official X (Twitter) account.",
-    reward:50, xp:10,
-    btn:"FOLLOW ON X",
-    href:"https://x.com/greenavax",
-    modalType:"redirect"
-  },
-  {
-    id:1, step:"STEP 2",
-    name:"Connect wallet to Retro 9000",
-    desc:'Connect your wallet to <a href="https://retro9000.avax.network" target="_blank">https://retro9000.avax.network</a>',
-    reward:100, xp:20,
-    btn:"OPEN RETRO 9000",
-    href:"https://retro9000.avax.network",
-    modalType:"redirect"
-  },
-  {
-    id:2, step:"STEP 3",
-    name:"Link your X account in Retro 9000",
-    desc:"Link your X (Twitter) account in Retro 9000.",
-    reward:100, xp:20,
-    btn:"LINK X ACCOUNT",
-    href:"https://retro9000.avax.network",
-    modalType:"redirect"
-  },
-  {
-    id:3, step:"STEP 4",
-    name:"Paste your AVAX C-Chain address",
-    desc:"Submit your AVAX C-Chain wallet address.",
-    reward:50, xp:10,
-    btn:"SUBMIT ADDRESS",
-    href:null,
-    modalType:"address"
-  }
+// ═══════════════════════════════════════════════════
+//  RANK DEFINITIONS
+// ═══════════════════════════════════════════════════
+const RANKS = [
+  { name: "Sprout",             price: "0.01", desc: "First signs of impact. Welcome to the network." },
+  { name: "Conservationist",    price: "0.1",  desc: "Core active protector of the ecosystem." },
+  { name: "Forest Guardian",    price: "0.5",  desc: "Protecting larger ecosystems on-chain." },
+  { name: "Carbon Warden",      price: "1",    desc: "Climate defender. Earning rare multipliers." },
+  { name: "Earth Steward",      price: "10",   desc: "High-level caretaker of the green network." },
+  { name: "Legendary Sentinel", price: "50",   desc: "Mythic top-tier protector. Exclusive access." }
 ];
 
-/* ══════════════════════════════════
-   STATE
-══════════════════════════════════ */
-let provider, signer, userAddress;
-let progress = [false,false,false,false];
-const readProvider = new ethers.providers.JsonRpcProvider(
-  "https://api.avax.network/ext/bc/C/rpc"
-);
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let provider, signer, contract, userAddress;
+let claimedRanks = [false,false,false,false,false,false];
 
-/* ══════════════════════════════════
-   PARTICLES
-══════════════════════════════════ */
-(function spawnParticles(){
-  const wrap = document.getElementById("particles");
-  for(let i=0;i<18;i++){
-    const p = document.createElement("div");
-    p.className = "particle";
-    p.style.cssText = `
-      left:${Math.random()*100}%;
-      width:${1+Math.random()*2}px;
-      height:${1+Math.random()*2}px;
-      animation-duration:${8+Math.random()*12}s;
-      animation-delay:${Math.random()*10}s;
-      opacity:${0.3+Math.random()*0.5};
-    `;
-    wrap.appendChild(p);
-  }
-})();
+// ═══════════════════════════════════════════════════
+//  AVAX C-CHAIN MAINNET
+// ═══════════════════════════════════════════════════
+const AVAX_CHAIN_ID = "0xa86a";
 
-/* ══════════════════════════════════
-   PARTICIPANTS (public, no wallet)
-══════════════════════════════════ */
-async function loadParticipants(){
-  try{
-    const c = new ethers.Contract(QUEST_CA, QUEST_ABI, readProvider);
-    const n = await c.participantCount();
-    document.getElementById("participantCount").textContent =
-      Number(n).toLocaleString();
-  }catch{
-    document.getElementById("participantCount").textContent = "—";
-  }
-}
-
-/* ══════════════════════════════════
-   WALLET CONNECT
-══════════════════════════════════ */
-async function connectWallet(){
-  if(!window.ethereum){
-    showToast("Install MetaMask or Core Wallet first","err");
-    return;
-  }
-  try{
-    await window.ethereum.request({method:"eth_requestAccounts"});
-    await switchChain();
-    provider    = new ethers.providers.Web3Provider(window.ethereum);
-    signer      = provider.getSigner();
-    userAddress = await signer.getAddress();
-
-    const btn = document.getElementById("connectBtn");
-    btn.textContent = userAddress.slice(0,6)+"…"+userAddress.slice(-4);
-    btn.classList.add("connected");
-
-    await loadUserData();
-    document.getElementById("walletBar").classList.add("show");
-    showToast("Wallet connected ✓");
-  }catch(e){
-    showToast(e.message||"Connection failed","err");
-  }
-}
-
-async function switchChain(){
-  try{
-    await window.ethereum.request({
-      method:"wallet_switchEthereumChain",
-      params:[{chainId:CHAIN_ID}]
-    });
-  }catch(e){
-    if(e.code===4902){
+async function ensureAvaxNetwork() {
+  const chainId = await window.ethereum.request({ method: "eth_chainId" });
+  if (chainId !== AVAX_CHAIN_ID) {
+    try {
       await window.ethereum.request({
-        method:"wallet_addEthereumChain",
-        params:[{
-          chainId:CHAIN_ID,
-          chainName:"Avalanche C-Chain",
-          nativeCurrency:{name:"AVAX",symbol:"AVAX",decimals:18},
-          rpcUrls:["https://api.avax.network/ext/bc/C/rpc"],
-          blockExplorerUrls:["https://snowtrace.io"]
-        }]
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: AVAX_CHAIN_ID }]
       });
+    } catch (err) {
+      if (err.code === 4902) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: AVAX_CHAIN_ID,
+            chainName: "Avalanche C-Chain",
+            nativeCurrency: { name:"AVAX", symbol:"AVAX", decimals:18 },
+            rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+            blockExplorerUrls: ["https://snowtrace.io/"]
+          }]
+        });
+      } else { throw err; }
     }
   }
 }
 
-async function loadUserData(){
-  try{
-    const qc = new ethers.Contract(QUEST_CA, QUEST_ABI, provider);
-    const tc = new ethers.Contract(TOKEN_CA, TOKEN_ABI, provider);
-    const [prog,earnedRaw,dec,balRaw] = await Promise.all([
-      qc.getUserProgress(userAddress),
-      qc.totalEarned(userAddress),
-      tc.decimals(),
-      tc.balanceOf(userAddress)
-    ]);
-    progress = prog.map(Boolean);
-    const earned = Math.round(parseFloat(ethers.utils.formatEther(earnedRaw)));
-    const bal    = parseFloat(ethers.utils.formatUnits(balRaw,dec)).toFixed(2);
-    const done   = progress.filter(Boolean).length;
-    document.getElementById("wbAddr").textContent   = userAddress.slice(0,6)+"…"+userAddress.slice(-4);
-    document.getElementById("wbBal").textContent    = bal+" GRAV";
-    document.getElementById("wbDone").textContent   = done+" / 4";
-    document.getElementById("wbEarned").textContent = earned+" GRAV";
-    render();
-  }catch(e){
-    showToast("Chain read error","err");
+// ═══════════════════════════════════════════════════
+//  CONNECT WALLET
+// ═══════════════════════════════════════════════════
+async function connectWallet() {
+  if (!window.ethereum) {
+    showStatus("No wallet detected. Install MetaMask or Core Wallet.", "error");
+    return;
+  }
+  try {
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    await ensureAvaxNetwork();
+
+    provider    = new ethers.providers.Web3Provider(window.ethereum);
+    signer      = provider.getSigner();
+    userAddress = await signer.getAddress();
+    contract    = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
+    const short = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
+    const btn   = document.getElementById("connectBtn");
+    btn.textContent = "⬡ " + short;
+    btn.classList.add("connected");
+    document.getElementById("walletInfo").textContent = "AVAX C-CHAIN · MAINNET · CONNECTED";
+
+    await loadRanks();
+
+    window.ethereum.on("accountsChanged", () => location.reload());
+    window.ethereum.on("chainChanged",    () => location.reload());
+
+  } catch(err) {
+    showStatus(err.message || "Connection failed.", "error");
   }
 }
 
-/* ══════════════════════════════════
-   RENDER QUESTS
-══════════════════════════════════ */
-function iconSVG(id,done){
-  if(done) return `<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#00FF9F" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>`;
-  const icons = {
-    0:`<svg viewBox="0 0 24 24" width="26" height="26" fill="#00FF9F"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
-    1:`<svg viewBox="0 0 100 100" width="28" height="28"><circle cx="50" cy="50" r="50" fill="#00B074"/><polygon points="50,14 78,67 22,67" fill="white" opacity="0.96"/><polygon points="50,28 70,67 30,67" fill="#00B074"/><polygon points="50,58 66,82 34,82" fill="white" opacity="0.9"/><polygon points="50,67 62,82 38,82" fill="#00B074"/></svg>`,
-    2:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#00FF9F" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
-    3:`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#00FF9F" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>`
-  };
-  return icons[id];
+// ═══════════════════════════════════════════════════
+//  LOAD RANKS FROM CONTRACT
+// ═══════════════════════════════════════════════════
+async function loadRanks() {
+  try {
+    claimedRanks = await contract.getRanks(userAddress);
+    renderGrid();
+  } catch(err) {
+    showStatus("Could not load ranks from contract.", "error");
+    renderGrid();
+  }
 }
 
-function render(){
-  const list = document.getElementById("questList");
-  list.innerHTML = "";
-  QUESTS.forEach((q,i)=>{
-    const isDone      = progress[q.id];
-    const needsWallet = !userAddress;
-    const isPrevDone  = i===0 || (userAddress && progress[QUESTS[i-1].id]);
-    const isLocked    = !isDone && userAddress && !isPrevDone;
+// ═══════════════════════════════════════════════════
+//  RENDER RANK GRID
+// ═══════════════════════════════════════════════════
+function renderGrid() {
+  const grid = document.getElementById("rankGrid");
+  grid.innerHTML = "";
+
+  RANKS.forEach((rank, i) => {
+    const claimed  = claimedRanks[i];
+    const disabled = claimed || !userAddress;
+
     const card = document.createElement("div");
-    card.className = "quest-card"+(isDone?" done":"")+(isLocked?" locked":"");
+    card.className = "rank-card" + (claimed ? " claimed-card" : "");
+    card.id = `card-${i}`;
+
     card.innerHTML = `
-      <div class="q-icon">${iconSVG(q.id,isDone)}</div>
-      <div class="q-body">
-        <div class="q-name">${q.name}</div>
-        <div class="q-desc">${q.desc}</div>
-        <span class="q-step">${q.step}</span>
-      </div>
-      <div class="q-chevron">${isDone?"✓":"›"}</div>
-      <div class="q-reward">
-        <div class="qr-label">REWARD</div>
-        <div class="qr-amount">${q.reward}</div>
-        <div class="qr-unit">GRAV</div>
-        <div class="qr-xp">XP +${q.xp}</div>
-      </div>
-      <button class="q-btn${isDone?" done-btn":""}"
-        onclick="event.stopPropagation();questClick(${q.id})">
-        ${isDone?"✓ DONE":q.btn}
-      </button>`;
-    card.onclick = ()=>questClick(q.id);
-    list.appendChild(card);
+      <div class="rank-number">RANK 0${i+1}</div>
+      <div class="rank-name">${rank.name}</div>
+      <div class="rank-price">${rank.price} AVAX</div>
+      <div class="rank-desc">${rank.desc}</div>
+      <button
+        class="claim-btn ${claimed ? 'claimed' : 'unclaimed'}"
+        id="btn-${i}"
+        onclick="claimRank(${i})"
+        ${disabled ? 'disabled' : ''}
+      >${claimed ? '✓ CLAIMED' : 'GET RANK'}</button>
+    `;
+
+    grid.appendChild(card);
   });
 }
 
-/* ══════════════════════════════════
-   QUEST CLICK HANDLERS
-══════════════════════════════════ */
-function questClick(id){
-  // No wallet — show connect modal
-  if(!userAddress){ openModal(walletModal()); return; }
-  // Already done
-  if(progress[id]){ showToast("Quest already completed ✓"); return; }
-  // Previous quest not done (sequential lock)
-  if(id>0 && !progress[QUESTS[id-1].id]){
-    showToast("Complete Step "+(id)+" first","err"); return;
+// ═══════════════════════════════════════════════════
+//  CLAIM RANK
+// ═══════════════════════════════════════════════════
+async function claimRank(rankIndex) {
+  if (!contract) { showStatus("Connect your wallet first.", "error"); return; }
+
+  const rank  = RANKS[rankIndex];
+  const value = ethers.utils.parseEther(rank.price);
+
+  try {
+    setLoading(true);
+    const tx = await contract.claimRank(rankIndex, { value });
+    showStatus("Transaction sent · Waiting for confirmation...", "");
+    await tx.wait();
+    showStatus(`${rank.name} claimed successfully!`, "success");
+    claimedRanks[rankIndex] = true;
+    renderGrid();
+  } catch(err) {
+    const msg = err?.reason || err?.message || "Transaction failed.";
+    showStatus(msg.length > 90 ? msg.slice(0,90)+"…" : msg, "error");
+  } finally {
+    setLoading(false);
   }
-  const q = QUESTS[id];
-  if(q.modalType==="redirect") openModal(redirectModal(q));
-  else openModal(addressModal());
 }
 
-function redirectModal(q){
-  return `
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <h3>${q.name}</h3>
-    <p class="modal-desc">
-      ${q.id===0
-        ? "Follow the official GreenAvax X account. Once done the owner will verify and send your GRAV reward on-chain."
-        : q.id===1
-        ? "Connect your Avalanche wallet at retro9000.avax.network to complete this quest."
-        : "Link your X (Twitter) account inside Retro 9000 to complete this quest."
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function setLoading(on) {
+  document.getElementById("loadingOverlay").classList.toggle("active", on);
+}
+
+let _st;
+function showStatus(msg, type) {
+  const el = document.getElementById("statusMsg");
+  el.textContent = msg;
+  el.className   = "show" + (type ? " "+type : "");
+  clearTimeout(_st);
+  _st = setTimeout(() => { el.className = ""; }, 5000);
+}
+
+// ═══════════════════════════════════════════════════
+//  COSMIC GREEN WEAVE CANVAS
+// ═══════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById("bgCanvas");
+  const ctx    = canvas.getContext("2d");
+
+  let W, H, nodes = [], frame = 0;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initNodes() {
+    nodes = [];
+    const count = Math.floor((W * H) / 9000);
+    for (let i = 0; i < count; i++) {
+      nodes.push({
+        x:  Math.random() * W,
+        y:  Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        r:  Math.random() * 1.5 + 0.5,
+        hue: Math.random() > 0.6 ? 145 : 48  // green or gold
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // subtle radial glow center
+    const grd = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.55);
+    grd.addColorStop(0,   "rgba(0,80,30,0.18)");
+    grd.addColorStop(0.5, "rgba(0,40,15,0.06)");
+    grd.addColorStop(1,   "rgba(0,0,0,0)");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    // connections
+    const DIST = 130;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i+1; j < nodes.length; j++) {
+        const dx   = nodes[i].x - nodes[j].x;
+        const dy   = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < DIST) {
+          const alpha = (1 - dist/DIST) * 0.18;
+          // mix gold and green based on node hues
+          const hue = (nodes[i].hue + nodes[j].hue) / 2;
+          ctx.strokeStyle = `hsla(${hue}, 80%, 50%, ${alpha})`;
+          ctx.lineWidth   = 0.6;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
       }
-    </p>
-    <a class="ext-link" href="${q.href}" target="_blank">
-      ↗ ${q.id===0?"Open @greenavax on X":"Open retro9000.avax.network"}
-    </a>
-    <div class="pending-note">
-      ⏳ After completing, the owner verifies on-chain and <strong style="color:var(--lime)">${q.reward} GRAV</strong> is sent to your wallet automatically.
-    </div>`;
-}
+    }
 
-function addressModal(){
-  return `
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <h3>Paste your AVAX C-Chain address</h3>
-    <p class="modal-desc">Submit your Avalanche C-Chain wallet address to register for the GRAVAX airdrop.</p>
-    <input class="addr-inp" id="addrInp" placeholder="0x…" maxlength="42"/>
-    <p class="addr-hint">42 characters · starts with 0x</p>
-    <div class="m-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-submit" onclick="submitAddr()">SUBMIT ADDRESS</button>
-    </div>
-    <div class="pending-note">⏳ Owner verifies and sends <strong style="color:var(--lime)">50 GRAV</strong> to your wallet.</div>`;
-}
+    // nodes
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${n.hue}, 90%, 60%, 0.5)`;
+      ctx.fill();
 
-function walletModal(){
-  return `
-    <button class="modal-close" onclick="closeModal()">×</button>
-    <h3>Connect your wallet</h3>
-    <p class="modal-desc">Connect an Avalanche wallet to start completing quests and earning GRAV.</p>
-    <div class="w-opt" onclick="closeModal();connectWallet()">
-      <div class="w-logo">🔺</div>
-      <div><div class="w-name">Core Wallet</div><div class="w-sub">Avalanche native</div></div>
-    </div>
-    <div class="w-opt" onclick="closeModal();connectWallet()">
-      <div class="w-logo">🦊</div>
-      <div><div class="w-name">MetaMask</div><div class="w-sub">EVM · Avalanche C-Chain</div></div>
-    </div>
-    <div class="w-opt" onclick="closeModal();connectWallet()">
-      <div class="w-logo">🔗</div>
-      <div><div class="w-name">WalletConnect</div><div class="w-sub">Multi-wallet</div></div>
-    </div>`;
-}
-
-async function submitAddr(){
-  const val = document.getElementById("addrInp")?.value?.trim();
-  if(!val||!val.startsWith("0x")||val.length!==42){
-    document.getElementById("addrInp").style.borderColor="#f87171";
-    showToast("Enter a valid 42-char 0x address","err");
-    return;
-  }
-  try{
-    await fetch(SHEETS_URL,{
-      method:"POST",mode:"no-cors",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        wallet:userAddress||"unknown",
-        cchain:val,
-        timestamp:new Date().toISOString()
-      })
+      // move
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
     });
-  }catch{}
-  closeModal();
-  showToast("Address submitted — awaiting verification ⏳");
-}
 
-/* ══════════════════════════════════
-   MODAL / TOAST HELPERS
-══════════════════════════════════ */
-function openModal(html){
-  document.getElementById("modalBox").innerHTML = html;
-  document.getElementById("overlay").classList.add("open");
-}
-function closeModal(){
-  document.getElementById("overlay").classList.remove("open");
-}
-document.getElementById("overlay").addEventListener("click",function(e){
-  if(e.target===this) closeModal();
-});
-function showToast(msg,type=""){
-  const t = document.getElementById("toast");
-  document.getElementById("toastMsg").textContent = msg;
-  t.className = "toast"+(type==="err"?" err":"");
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),3500);
-}
+    frame++;
+    requestAnimationFrame(draw);
+  }
 
-/* ══════════════════════════════════
-   INIT
-══════════════════════════════════ */
-loadParticipants();
-setInterval(loadParticipants,30000);
-render();
+  resize();
+  initNodes();
+  draw();
+  window.addEventListener("resize", () => { resize(); initNodes(); });
+})();
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+renderGrid();
 </script>
 </body>
 </html>
